@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* ===== Warna & font tema (berdasarkan logo Polibatam) ===== */
+@theme {
+  --font-sans: "Ubuntu", ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #030a14;       /* latar utama (navy sangat gelap) */
+  --color-navy: #003366;      /* biru tua logo */
+  --color-brand: #7cdbfd;     /* biru muda logo */
+  --color-accent: #e18029;    /* oranye logo */
+  --color-on-accent: #030a14; /* warna teks di atas tombol oranye (tidak ikut berubah) */
+  --color-snow: #ffffff;      /* putih tetap, untuk teks di atas gambar/gradient */
+}
+
+/* ===== MODE GELAP (default) ===== */
+:root {
+  color-scheme: dark;
+  --body-fg: #e6edf6;
+  --icon-strong: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.035);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --card-border-hover: rgba(124, 219, 253, 0.35);
+  --card-glow: rgba(124, 219, 253, 0.14);
+  --card-shadow: none;
+  --grid-line: rgba(255, 255, 255, 0.03);
+  --shine: linear-gradient(110deg, #7cdbfd 0%, #d4f4ff 35%, #4fb8ef 60%, #7cdbfd 100%);
+}
+
+/* ===== MODE TERANG (kebalikan) ===== */
+   
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-ink: #f3f7fc;
+  --color-brand: #0a63c9;
+  --color-accent: #c9690f;
+  --color-white: #0a1f3d;
+  --color-slate-100: #142c4d;
+  --color-slate-200: #1d3858;
+  --color-slate-300: #2d4768;
+  --color-slate-400: #4a6382;
+  --color-slate-500: #6a809b;
+
+  --body-fg: #1d3858;
+  --icon-strong: #0a1f3d;
+  --card-bg: rgba(255, 255, 255, 0.72);
+  --card-border: rgba(0, 51, 102, 0.12);
+  --card-border-hover: rgba(10, 99, 201, 0.4);
+  --card-glow: rgba(10, 99, 201, 0.13);
+  --card-shadow: 0 10px 30px rgba(0, 40, 100, 0.07);
+  --grid-line: rgba(0, 51, 102, 0.06);
+  --shine: linear-gradient(110deg, #003366 0%, #0a63c9 40%, #2a9bd8 65%, #003366 100%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--body-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(124, 219, 253, 0.3);
+}
+
+/* Transisi halus saat ganti tema (kelas ini dipasang sebentar oleh ThemeToggle) */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease,
+    box-shadow 0.5s ease !important;
+}
+
+/* ===== Teks gradient berkilau untuk kata sorotan ===== */
+.text-shine {
+  background-image: var(--shine);
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 6s linear infinite;
+}
+
+/* ===== Kursor ketik ===== */
+.caret::after {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 5px;
+  background: var(--color-brand);
+  vertical-align: -0.08em;
+  animation: blink 1s steps(1) infinite;
+}
+
+/* ===== Kartu dengan efek cahaya mengikuti mouse ===== */
+.spot-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  transition: border-color 0.35s ease, transform 0.35s ease, background 0.35s ease;
+}
+.spot-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    var(--card-glow),
+    transparent 60%
+  );
+}
+.spot-card:hover::before {
+  opacity: 1;
+}
+.spot-card:hover {
+  border-color: var(--card-border-hover);
+}
+
+/* ===== Latar belakang dinamis ===== */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(110px);
+  will-change: transform;
+}
+.blob-1 {
+  width: 40rem; height: 40rem; background: #0a4d9c; opacity: 0.45;
+  top: -12rem; left: -12rem;
+  animation: drift1 24s ease-in-out infinite alternate;
+}
+.blob-2 {
+  width: 30rem; height: 30rem; background: #e18029; opacity: 0.16;
+  top: 35%; right: -12rem;
+  animation: drift2 28s ease-in-out infinite alternate;
+}
+.blob-3 {
+  width: 34rem; height: 34rem; background: #2a9bd8; opacity: 0.22;
+  bottom: -14rem; left: 20%;
+  animation: drift3 26s ease-in-out infinite alternate;
+}
+:root[data-theme="light"] .blob-1 { background: #5aa7ff; opacity: 0.32; }
+:root[data-theme="light"] .blob-2 { background: #ffb066; opacity: 0.3; }
+:root[data-theme="light"] .blob-3 { background: #7cdbfd; opacity: 0.4; }
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+}
+
+@keyframes shine {
+  to { background-position: 220% center; }
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+@keyframes drift1 {
+  to { transform: translate(14vw, 20vh) scale(1.15); }
+}
+@keyframes drift2 {
+  to { transform: translate(-16vw, -14vh) scale(1.12); }
+}
+@keyframes drift3 {
+  to { transform: translate(12vw, -18vh) scale(0.9); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
