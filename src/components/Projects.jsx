@@ -1,10 +1,17 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
 import { FiExternalLink, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import SectionTitle from "./SectionTitle";
 import SpotlightCard from "./SpotlightCard";
+import ProjectDetail from "./ProjectDetail";
 import { projects } from "../data/content";
+
+// Halaman detail dibuka lewat hash #proyek/<slug>, jadi bisa dibagikan dan tombol Back browser menutupnya.
+const HASH_PREFIX = "#proyek/";
+const slugFromHash = () =>
+  window.location.hash.startsWith(HASH_PREFIX) ? window.location.hash.slice(HASH_PREFIX.length) : null;
+const findDetail = (slug) => projects.find((p) => p.detail && p.slug === slug) ?? null;
 
 const getPerView = () =>
   window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1;
@@ -30,9 +37,9 @@ const slide = {
   exit: (d) => ({ x: d * -70, opacity: 0 }),
 };
 
-function ProjectCard({ p, index }) {
+function ProjectCard({ p, index, onOpen }) {
   return (
-    <SpotlightCard className="group flex h-full flex-col rounded-3xl hover:-translate-y-2 hover:!border-accent/70">
+    <SpotlightCard className="group relative flex h-full flex-col rounded-3xl hover:-translate-y-2 hover:!border-accent/70">
       {/* gambar / placeholder gradient */}
       <div className="relative h-48 overflow-hidden">
         {p.image ? (
@@ -63,7 +70,7 @@ function ProjectCard({ p, index }) {
           </div>
         )}
 
-        <div className="absolute right-3 top-3 flex gap-2">
+        <div className="absolute right-3 top-3 z-10 flex gap-2">
           <a
             href={p.github}
             target="_blank"
@@ -87,7 +94,19 @@ function ProjectCard({ p, index }) {
 
       <div className="flex flex-1 flex-col p-6">
         <h3 className="text-xl font-bold text-white transition-colors group-hover:text-accent">
-          {p.title}
+          {p.detail ? (
+            // tombol "stretched": area klik menutupi seluruh kartu, tampilan kartu tidak berubah
+            <button
+              type="button"
+              onClick={(e) => onOpen(p, e.currentTarget)}
+              aria-label={`Lihat detail proyek ${p.title}`}
+              className="text-left after:absolute after:inset-0 after:rounded-3xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-accent"
+            >
+              {p.title}
+            </button>
+          ) : (
+            p.title
+          )}
         </h3>
         <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-400">{p.desc}</p>
         <div className="mt-5 flex flex-wrap gap-2">
@@ -113,6 +132,40 @@ export default function Projects() {
     setPage([next, next > current ? 1 : -1]);
   };
 
+  // --- halaman detail proyek ---
+  const [active, setActive] = useState(() => findDetail(slugFromHash()));
+  const returnFocus = useRef(null);
+  const pushed = useRef(false);
+
+  useEffect(() => {
+    const sync = () => setActive(findDetail(slugFromHash()));
+    window.addEventListener("popstate", sync);
+    window.addEventListener("hashchange", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("hashchange", sync);
+    };
+  }, []);
+
+  const openDetail = (p, el) => {
+    returnFocus.current = el;
+    pushed.current = true;
+    window.history.pushState(null, "", HASH_PREFIX + p.slug);
+    setActive(p);
+  };
+
+  const closeDetail = useCallback(() => {
+    if (pushed.current) {
+      pushed.current = false;
+      window.history.back(); // popstate akan menutup detail
+    } else {
+      // dibuka langsung dari link: jangan keluar dari situs, cukup ganti hash
+      window.history.replaceState(null, "", "#projects");
+      setActive(null);
+    }
+    setTimeout(() => returnFocus.current?.focus({ preventScroll: true }), 0);
+  }, []);
+
   return (
     <section id="projects" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-24">
       <SectionTitle eyebrow="Portofolio Saya" title="Proyek" highlight="Pilihan" />
@@ -137,7 +190,7 @@ export default function Projects() {
             className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
             {pages[current].map((p, i) => (
-              <ProjectCard key={p.title} p={p} index={current * perView + i} />
+              <ProjectCard key={p.title} p={p} index={current * perView + i} onOpen={openDetail} />
             ))}
           </motion.div>
         </AnimatePresence>
@@ -177,6 +230,10 @@ export default function Projects() {
           </button>
         </div>
       )}
+
+      <AnimatePresence>
+        {active && <ProjectDetail key={active.slug} project={active} onClose={closeDetail} />}
+      </AnimatePresence>
     </section>
   );
 }
