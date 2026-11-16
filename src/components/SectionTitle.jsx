@@ -1,40 +1,22 @@
 import { motion } from "framer-motion";
+import { FiCircle } from "react-icons/fi";
+import { blurIn } from "../lib/motion";
 
-const ease = [0.22, 1, 0.36, 1];
-
-// Judul section: label kecil yang merapat, judul naik dari balik "topeng", garis memanjang.
-export default function SectionTitle({ eyebrow, title, highlight }) {
+// Judul section: label pill kecil + judul besar tipis; kata sorotan berwarna redup.
+export default function SectionTitle({ eyebrow, title, highlight, invert = false }) {
   return (
-    <div className="mb-14 text-center">
-      <motion.p
-        initial={{ opacity: 0, letterSpacing: "0.55em" }}
-        whileInView={{ opacity: 1, letterSpacing: "0.3em" }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.9, ease }}
-        className="mb-3 text-sm font-bold uppercase text-accent"
-      >
+    <div className="mb-14 flex flex-col items-center text-center">
+      <motion.span {...blurIn(0)} className="pill">
+        <span className="dot"><FiCircle size={9} strokeWidth={3} /></span>
         {eyebrow}
-      </motion.p>
-
-      <h2 className="overflow-hidden pb-2 text-4xl font-bold text-white sm:text-5xl">
-        <motion.span
-          initial={{ y: "115%" }}
-          whileInView={{ y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.85, delay: 0.1, ease }}
-          className="block"
-        >
-          {title} <span className="text-shine">{highlight}</span>
-        </motion.span>
-      </h2>
-
-      <motion.div
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8, delay: 0.4, ease }}
-        className="mx-auto mt-5 h-1 w-24 origin-center rounded-full bg-accent"
-      />
+      </motion.span>
+      <motion.h2
+        {...blurIn(0.08)}
+        className={`title mt-5 text-[clamp(2.25rem,5vw,3.5rem)] ${invert ? "text-[#f2f3f5]" : "text-fg"}`}
+      >
+        {title}{" "}
+        <span className={invert ? "text-[#f2f3f5]/50" : "text-shine"}>{highlight}</span>
+      </motion.h2>
     </div>
   );
 }

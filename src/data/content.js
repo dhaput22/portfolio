@@ -20,8 +20,8 @@ export const profile = {
   email: "muhammaddavaputra@gmail.com",
   phone: "+62 831-8153-1047",
   location: "Batam, Kepulauan Riau",
-  cvUrl: "", // contoh: "/cv.pdf" (taruh file di folder public/). Kosong = tombol CV disembunyikan
-  photo: "/profile.jpeg", // contoh: "/profile.jpg" (taruh di folder public/). Kosong = pakai inisial
+  cvUrl: "/cv.pdf", // taruh file CV di folder public/ dengan nama cv.pdf
+  photo: "/daput.png", // contoh: "/profile.jpg" (taruh di folder public/). Kosong = pakai inisial
   socials: {
     github: "https://github.com/dhaput22",
     linkedin: "https://www.linkedin.com/in/muhammad-dafa-putra-897970432/",
@@ -105,7 +105,7 @@ export const projects = [
       subtitle: "Otomatisasi receiving, delivery, dan monitoring stok real-time",
       meta: [
         { label: "Klien", value: "PT. Epson Batam" },
-        { label: "Peran", value: "Full-Stack Developer (solo)" },
+        { label: "Peran", value: "Full-Stack Developer" },
         { label: "Periode", value: "2025 - 2026" },
         { label: "Jenis", value: "Proyek Tugas Akhir" },
       ],

@@ -43,7 +43,7 @@ function Lightbox({ items, index, onClose, onMove }) {
       role="dialog"
       aria-modal="true"
       aria-label={`Screenshot: ${item.caption}`}
-      className="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-4 bg-black/90 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[90] flex flex-col items-center justify-center gap-4 bg-black/92 p-4 md:backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -118,14 +118,14 @@ export default function ProjectDetail({ project: p, onClose }) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="project-detail-title"
-      className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-ink/95 backdrop-blur-xl"
+      className="fixed inset-0 z-[80] overflow-y-auto overscroll-contain bg-ink md:bg-ink/95 md:backdrop-blur-xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
     >
       {/* bar atas */}
-      <div className="sticky top-0 z-10 border-b border-white/10 bg-ink/85 backdrop-blur-md">
+      <div className="sticky top-0 z-10 border-b border-white/10 bg-ink md:bg-ink/85 md:backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <button
             ref={backRef}

@@ -1,182 +1,295 @@
 @import "tailwindcss";
 
-/* ===== Warna & font tema (berdasarkan logo Polibatam) ===== */
+/* =====================================================================
+   Gaya "Soft Canvas" (referensi: kanvas abu kebiruan, kartu putih,
+   tipografi tipis dan rapat, aksen lime, blok charcoal untuk kontras)
+   ===================================================================== */
 @theme {
-  --font-sans: "Ubuntu", ui-sans-serif, system-ui, sans-serif;
-  --color-ink: #030a14;       /* latar utama (navy sangat gelap) */
-  --color-navy: #003366;      /* biru tua logo */
-  --color-brand: #7cdbfd;     /* biru muda logo */
-  --color-accent: #e18029;    /* oranye logo */
-  --color-on-accent: #030a14; /* warna teks di atas tombol oranye (tidak ikut berubah) */
-  --color-snow: #ffffff;      /* putih tetap, untuk teks di atas gambar/gradient */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* token baru */
+  --color-canvas: #ebeff5;       /* latar halaman */
+  --color-surface: #ffffff;      /* kartu */
+  --color-fill: #f3f5f9;         /* isian di dalam kartu (input, chip) */
+  --color-fg: #242426;           /* teks utama */
+  --color-fg-muted: rgba(36, 36, 38, 0.72);
+  --color-fg-subtle: rgba(36, 36, 38, 0.48);
+  --color-line: rgba(36, 36, 38, 0.08);
+  --color-charcoal: #35363b;     /* tombol & blok gelap */
+  --color-charcoal-2: #4d4f57;
+  --color-lime: #d9ff5c;         /* aksen */
+  --color-on-lime: #242426;
+
+  /* nama lama, dipetakan ke token baru supaya komponen lama tetap konsisten */
+  --color-ink: #ebeff5;
+  --color-navy: #35363b;
+  --color-brand: rgba(36, 36, 38, 0.72);
+  --color-accent: #35363b;
+  --color-on-accent: #ffffff;
+  --color-snow: #ffffff;
+
+  --shadow-soft: 0 0.6px 0.6px -1.25px rgba(0, 0, 0, 0.09), 0 2.3px 2.3px -2.5px rgba(0, 0, 0, 0.08),
+    0 10px 10px -3.75px rgba(0, 0, 0, 0.03);
+  --shadow-float: 0 0.6px 1.1px -0.8px rgba(79, 86, 130, 0.11), 0 1.9px 3.5px -1.6px rgba(79, 86, 130, 0.11),
+    0 5px 9px -2.4px rgba(79, 86, 130, 0.1), 0 16px 29px -3.2px rgba(79, 86, 130, 0.06);
 }
 
-/* ===== MODE GELAP (default) ===== */
+/* Mode terang (default) memetakan warna utilitas lama ke palet referensi */
 :root {
-  color-scheme: dark;
-  --body-fg: #e6edf6;
-  --icon-strong: #ffffff;
-  --card-bg: rgba(255, 255, 255, 0.035);
-  --card-border: rgba(255, 255, 255, 0.08);
-  --card-border-hover: rgba(124, 219, 253, 0.35);
-  --card-glow: rgba(124, 219, 253, 0.14);
-  --card-shadow: none;
-  --grid-line: rgba(255, 255, 255, 0.03);
-  --shine: linear-gradient(110deg, #7cdbfd 0%, #d4f4ff 35%, #4fb8ef 60%, #7cdbfd 100%);
+  color-scheme: light;
+  --icon-strong: #242426;
+  --color-white: #242426;
+  --color-slate-100: #242426;
+  --color-slate-200: rgba(36, 36, 38, 0.85);
+  --color-slate-300: rgba(36, 36, 38, 0.75);
+  --color-slate-400: rgba(36, 36, 38, 0.62);
+  --color-slate-500: rgba(36, 36, 38, 0.5);
 }
 
-/* ===== MODE TERANG (kebalikan) ===== */
-   
-:root[data-theme="light"] {
-  color-scheme: light;
-  --color-ink: #f3f7fc;
-  --color-brand: #0a63c9;
-  --color-accent: #c9690f;
-  --color-white: #0a1f3d;
-  --color-slate-100: #142c4d;
-  --color-slate-200: #1d3858;
-  --color-slate-300: #2d4768;
-  --color-slate-400: #4a6382;
-  --color-slate-500: #6a809b;
+/* ===== MODE GELAP: versi charcoal dari palet yang sama ===== */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --icon-strong: #f2f3f5;
+  --color-canvas: #1b1c1f;
+  --color-surface: #25262a;
+  --color-fill: #2e2f34;
+  --color-fg: #f2f3f5;
+  --color-fg-muted: rgba(242, 243, 245, 0.72);
+  --color-fg-subtle: rgba(242, 243, 245, 0.48);
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-charcoal: #f2f3f5;
+  --color-charcoal-2: #d4d6dc;
 
-  --body-fg: #1d3858;
-  --icon-strong: #0a1f3d;
-  --card-bg: rgba(255, 255, 255, 0.72);
-  --card-border: rgba(0, 51, 102, 0.12);
-  --card-border-hover: rgba(10, 99, 201, 0.4);
-  --card-glow: rgba(10, 99, 201, 0.13);
-  --card-shadow: 0 10px 30px rgba(0, 40, 100, 0.07);
-  --grid-line: rgba(0, 51, 102, 0.06);
-  --shine: linear-gradient(110deg, #003366 0%, #0a63c9 40%, #2a9bd8 65%, #003366 100%);
+  --color-ink: #1b1c1f;
+  --color-navy: #111214;
+  --color-brand: rgba(242, 243, 245, 0.72);
+  --color-accent: #f2f3f5;
+  --color-on-accent: #242426;
+
+  --color-white: #f2f3f5;
+  --color-slate-100: #f2f3f5;
+  --color-slate-200: rgba(242, 243, 245, 0.85);
+  --color-slate-300: rgba(242, 243, 245, 0.75);
+  --color-slate-400: rgba(242, 243, 245, 0.62);
+  --color-slate-500: rgba(242, 243, 245, 0.5);
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 16px -6px rgba(0, 0, 0, 0.35);
+  --shadow-float: 0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 32px -8px rgba(0, 0, 0, 0.45);
 }
 
 html {
   scroll-behavior: smooth;
 }
 
+/* ===== Latar yang berbaur halus antar section saat di-scroll =====
+   Nilainya dihitung terus oleh Background.jsx (campuran 3 nada dari satu keluarga warna).
+   Ini hanya nilai awal sebelum JavaScript berjalan. */
+:root { --section-bg: #ebeff5; }
+:root[data-theme="dark"] { --section-bg: #1b1c1f; }
+
 body {
-  background: var(--color-ink);
-  color: var(--body-fg);
+  background: var(--section-bg);
+  color: var(--color-fg);
   font-family: var(--font-sans);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {
-  background: rgba(124, 219, 253, 0.3);
+  background: var(--color-lime);
+  color: #242426;
 }
 
-/* Transisi halus saat ganti tema (kelas ini dipasang sebentar oleh ThemeToggle) */
+:where(a, button, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-fg);
+  outline-offset: 3px;
+}
+
+/* Judul besar: tipis, rapat, seperti referensi */
+.display {
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+.title {
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+/* Kata sorotan di judul: warna redup, bukan gradient */
+.text-shine {
+  color: var(--color-fg-subtle);
+}
+
+/* Transisi halus saat ganti tema (dipasang sebentar oleh ThemeToggle) */
 .theme-transition,
 .theme-transition *,
 .theme-transition *::before,
 .theme-transition *::after {
-  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease,
-    box-shadow 0.5s ease !important;
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
+    box-shadow 0.45s ease !important;
 }
 
-/* ===== Teks gradient berkilau untuk kata sorotan ===== */
-.text-shine {
-  background-image: var(--shine);
-  background-size: 220% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shine 6s linear infinite;
-}
-
-/* ===== Kursor ketik ===== */
+/* Kursor ketik untuk teks peran */
 .caret::after {
   content: "";
   display: inline-block;
-  width: 3px;
-  height: 0.9em;
-  margin-left: 5px;
-  background: var(--color-brand);
-  vertical-align: -0.08em;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 3px;
+  background: currentColor;
+  vertical-align: -0.12em;
   animation: blink 1s steps(1) infinite;
 }
 
-/* ===== Kartu dengan efek cahaya mengikuti mouse ===== */
+/* ===== Kartu dasar ===== */
 .spot-card {
   position: relative;
   overflow: hidden;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  box-shadow: var(--card-shadow);
-  transition: border-color 0.35s ease, transform 0.35s ease, background 0.35s ease;
-}
-.spot-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  background: radial-gradient(
-    420px circle at var(--mx, 50%) var(--my, 50%),
-    var(--card-glow),
-    transparent 60%
-  );
-}
-.spot-card:hover::before {
-  opacity: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 .spot-card:hover {
-  border-color: var(--card-border-hover);
+  box-shadow: var(--shadow-float);
 }
 
-/* ===== Latar belakang dinamis ===== */
-.blob {
+/* Bingkai ganda: wadah abu dengan kartu putih di dalamnya */
+.frame {
+  background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+  border: 1px solid var(--color-line);
+  padding: 6px;
+}
+
+/* ===== Tombol utama: pill gelap + kotak ikon lime, panah bergeser saat hover ===== */
+.btn-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  height: 56px;
+  padding: 6px 26px 6px 6px;
+  border-radius: 18px;
+  background: var(--color-charcoal);
+  color: var(--color-canvas);
+  font-weight: 500;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+.btn-arrow:hover {
+  filter: brightness(1.12);
+}
+.btn-arrow:active {
+  transform: scale(0.98);
+}
+.icon-box {
+  position: relative;
+  display: flex;
+  height: 44px;
+  width: 44px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 13px;
+}
+.btn-arrow .icon-box {
+  background: var(--color-lime);
+  color: #242426;
+}
+.icon-box .arr {
   position: absolute;
+  transition: transform 0.35s cubic-bezier(0.6, 0, 0.2, 1);
+}
+.icon-box .arr-2 {
+  transform: translateX(-260%);
+}
+:is(.btn-arrow, .btn-soft, .group):hover .icon-box .arr-1 {
+  transform: translateX(260%);
+}
+:is(.btn-arrow, .btn-soft, .group):hover .icon-box .arr-2 {
+  transform: translateX(0);
+}
+.icon-box.down .arr-2 {
+  transform: translateY(-260%);
+}
+:is(.btn-arrow, .btn-soft, .group):hover .icon-box.down .arr-1 {
+  transform: translateY(260%);
+}
+:is(.btn-arrow, .btn-soft, .group):hover .icon-box.down .arr-2 {
+  transform: translateY(0);
+}
+
+/* Tombol sekunder: pill putih dengan kotak ikon abu */
+.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 56px;
+  padding: 6px 24px 6px 6px;
+  border-radius: 18px;
+  background: var(--color-surface);
+  color: var(--color-fg);
+  font-weight: 500;
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.btn-soft:hover {
+  box-shadow: var(--shadow-float);
+}
+.btn-soft .icon-box {
+  background: var(--color-fill);
+}
+
+/* Label kecil berbentuk pill (eyebrow) */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   border-radius: 9999px;
-  filter: blur(110px);
-  will-change: transform;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  box-shadow: var(--shadow-soft);
+  padding: 6px 14px 6px 8px;
+  font-size: 13px;
+  color: var(--color-fg);
 }
-.blob-1 {
-  width: 40rem; height: 40rem; background: #0a4d9c; opacity: 0.45;
-  top: -12rem; left: -12rem;
-  animation: drift1 24s ease-in-out infinite alternate;
-}
-.blob-2 {
-  width: 30rem; height: 30rem; background: #e18029; opacity: 0.16;
-  top: 35%; right: -12rem;
-  animation: drift2 28s ease-in-out infinite alternate;
-}
-.blob-3 {
-  width: 34rem; height: 34rem; background: #2a9bd8; opacity: 0.22;
-  bottom: -14rem; left: 20%;
-  animation: drift3 26s ease-in-out infinite alternate;
-}
-:root[data-theme="light"] .blob-1 { background: #5aa7ff; opacity: 0.32; }
-:root[data-theme="light"] .blob-2 { background: #ffb066; opacity: 0.3; }
-:root[data-theme="light"] .blob-3 { background: #7cdbfd; opacity: 0.4; }
-
-.grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
-  mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+.pill .dot {
+  display: flex;
+  height: 20px;
+  width: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: var(--color-fill);
 }
 
-@keyframes shine {
-  to { background-position: 220% center; }
+/* Di area dengan label kursor, kursor sistem disembunyikan (diganti label kursor custom) */
+@media (pointer: fine) {
+  [data-cursor]:not([data-cursor=""]),
+  [data-cursor]:not([data-cursor=""]) * {
+    cursor: none !important;
+  }
+  [data-cursor=""],
+  [data-cursor=""] * {
+    cursor: pointer !important;
+  }
 }
+
+:root[data-theme="dark"] .hero-glow {
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgba(242, 243, 245, 0.14) 0%,
+    rgba(242, 243, 245, 0.07) 24%,
+    rgba(217, 255, 92, 0.05) 42%,
+    rgba(217, 255, 92, 0) 66%
+  );
+}
+
 @keyframes blink {
   50% { opacity: 0; }
-}
-@keyframes drift1 {
-  to { transform: translate(14vw, 20vh) scale(1.15); }
-}
-@keyframes drift2 {
-  to { transform: translate(-16vw, -14vh) scale(1.12); }
-}
-@keyframes drift3 {
-  to { transform: translate(12vw, -18vh) scale(0.9); }
 }
 
 @media (prefers-reduced-motion: reduce) {

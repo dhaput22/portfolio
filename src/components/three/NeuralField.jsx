@@ -6,8 +6,8 @@ const B = { x: 16, y: 10, z: 6 }; // batas ruang tempat titik melayang
 const LINK = 4.2; // jarak maksimum dua titik tersambung
 
 const PAL = {
-  dark: { color: "#7cdbfd", blending: THREE.AdditiveBlending, nodeOpacity: 0.5, lineAlpha: 0.16 },
-  light: { color: "#0a63c9", blending: THREE.NormalBlending, nodeOpacity: 0.4, lineAlpha: 0.14 },
+  dark: { color: "#f2f3f5", blending: THREE.AdditiveBlending, nodeOpacity: 0.35, lineAlpha: 0.1 },
+  light: { color: "#35363b", blending: THREE.NormalBlending, nodeOpacity: 0.28, lineAlpha: 0.09 },
 };
 
 // Latar kedalaman yang tenang: sedikit titik, garis tipis, gerak sangat lambat.

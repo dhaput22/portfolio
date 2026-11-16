@@ -1,139 +1,100 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { FiCode, FiDownload } from "react-icons/fi";
 import { profile } from "../data/content";
 import useTypewriter from "../hooks/useTypewriter";
+import ArrowBox from "./ArrowBox";
+import { blur, easeOut } from "../lib/motion";
 
-const fadeUp = (delay) => ({
-  initial: { opacity: 0, y: 28 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] },
+// Masuk berurutan: blur -> tajam, sedikit naik.
+const enter = (i) => ({
+  initial: { opacity: 0, ...blur(8), y: 16 },
+  animate: { opacity: 1, ...blur(0), y: 0 },
+  transition: { duration: 0.9, ease: easeOut, delay: 0.15 + i * 0.1 },
 });
 
-function Chip({ children, className, delay = 0 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.7 }}
-      animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
-      transition={{
-        opacity: { delay: 1.1 + delay, duration: 0.5 },
-        scale: { delay: 1.1 + delay, duration: 0.5 },
-        y: { delay: 1.6 + delay, duration: 4.5, repeat: Infinity, ease: "easeInOut" },
-      }}
-      className={`absolute rounded-2xl border border-white/10 bg-ink/70 px-4 py-2 text-sm font-medium text-white shadow-xl backdrop-blur-md ${className}`}
-    >
-      {children}
-    </motion.div>
-  );
-}
 
 export default function Hero() {
   const typed = useTypewriter(profile.roles);
+  const ref = useRef(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  // parallax halus: foto turun pelan saat di-scroll
+  const photoY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 60]);
+
+  const photo = profile.photo || "";
+  const webp = /\.png$/i.test(photo) ? photo.replace(/\.png$/i, ".webp") : null;
 
   return (
     <section
       id="home"
-      className="relative mx-auto flex min-h-screen max-w-6xl items-center px-6 pb-24 pt-36"
+      ref={ref}
+      className="relative mx-auto max-w-6xl overflow-x-clip px-6 pt-28 lg:min-h-screen lg:pt-24"
     >
-      <div className="grid w-full items-center gap-16 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-        {/* ---------- Foto dengan bingkai miring ---------- */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mx-auto w-full max-w-[19rem] sm:max-w-sm"
-        >
-          {/* bingkai garis miring yang bergoyang pelan */}
-          <motion.div
-            animate={{ rotate: [-7, -10, -7] }}
-            transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 rounded-[1.75rem] border-2 border-brand/50"
-          />
-          <motion.div
-            animate={{ rotate: [5, 8, 5] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute inset-0 rounded-[1.75rem] border-2 border-accent/50"
-          />
-
-          <div className="relative aspect-[3/4] overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-navy via-[#0a63c9] to-[#7cdbfd] shadow-[0_0_80px_rgba(124,219,253,0.35)]">
-            {profile.photo ? (
-              <img src={profile.photo} alt={profile.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <span className="text-8xl font-bold text-snow/90">{profile.initials}</span>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_15%,rgba(255,255,255,0.25),transparent_55%)]" />
-          </div>
-
-          {/* <Chip className="-right-4 top-10 sm:-right-10" delay={0}>⚛️ React</Chip>
-          <Chip className="-left-4 bottom-24 sm:-left-10" delay={0.3}>🔥 Laravel</Chip>
-          <Chip className="-right-2 bottom-6 sm:-right-8" delay={0.6}>
-            <span className="mr-2 inline-block h-2 w-2 rounded-full bg-emerald-400" />
-            Open to work
-          </Chip> */}
-        </motion.div>
-
+      <div className="grid items-end gap-6 lg:min-h-[calc(100vh-6rem)] lg:grid-cols-[1.2fr_0.8fr]">
         {/* ---------- Teks ---------- */}
-        <div className="@container min-w-0">
-          {/* nama: besar, satu baris */}
-          <motion.h1
-            {...fadeUp(0.3)}
-            className="text-[clamp(1.75rem,5.8cqw,3rem)] font-bold leading-tight text-white sm:whitespace-nowrap"
-          >
-            {profile.greeting} <span className="text-accent">{profile.name}</span>
-          </motion.h1>
-
-          {/* typewriter: satu baris, font monospace */}
-          <motion.p
-            {...fadeUp(0.45)}
-            className="mt-3 whitespace-nowrap font-mono text-[clamp(0.9rem,4.2cqw,1.6rem)] font-medium text-slate-200"
-          >
-            {profile.titlePrefix}{" "}
-            <span className="text-shine caret">{typed}</span>
+        <div className="relative z-10 pb-10 lg:self-center lg:pb-24">
+          <motion.p {...enter(0)} className="pill">
+            <span className="dot"><FiCode size={11} /></span>
+            <span className="font-medium">
+              {profile.titlePrefix}
+              <span className="caret">{typed}</span>
+            </span>
           </motion.p>
 
-          <motion.p {...fadeUp(0.6)} className="mt-6 max-w-lg text-lg leading-relaxed text-slate-400">
+          <h1 className="display mt-6 text-[clamp(2.6rem,5.2vw,4.4rem)] text-fg">
+            <motion.span {...enter(1)} className="block">
+              {profile.greeting}
+            </motion.span>
+            <motion.span {...enter(2)} className="block lg:whitespace-nowrap">
+              {profile.name}
+            </motion.span>
+          </h1>
+
+          <motion.p {...enter(3)} className="mt-6 max-w-md text-lg leading-relaxed text-fg-muted">
             {profile.description}
           </motion.p>
 
-          <motion.div {...fadeUp(0.75)} className="mt-9 flex flex-wrap items-center gap-4">
-            <a
-              href="#contact"
-              className="rounded-full bg-accent px-8 py-3.5 font-bold text-on-accent shadow-[0_8px_28px_rgba(225,128,41,0.45)] transition hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(225,128,41,0.6)]"
-            >
-              Hubungi Saya
+          <motion.div {...enter(4)} className="mt-9 flex flex-wrap items-center gap-3">
+            <a href={profile.cvUrl} download className="btn-arrow">
+              <ArrowBox icon={FiDownload} direction="down" />
+              Unduh CV
             </a>
-            <a
-              href="#projects"
-              className="rounded-full border-2 border-accent px-8 py-3 font-bold text-accent transition hover:-translate-y-1 hover:bg-accent/10"
-            >
+            <a href="#projects" className="btn-soft">
+              <ArrowBox />
               Lihat Proyek
             </a>
-            {profile.cvUrl && (
-              <a
-                href={profile.cvUrl}
-                download
-                className="px-3 py-3 font-medium text-slate-300 transition hover:text-white"
-              >
-                Unduh CV ↓
-              </a>
+          </motion.div>
+        </div>
+
+        {/* ---------- Foto ---------- */}
+        <div className="relative mx-auto h-[min(34rem,120vw)] w-full max-w-lg lg:-ml-[6%] lg:-translate-y-20 lg:h-[calc(100vh-4.5rem)] lg:w-[132%] lg:max-w-none">
+          <motion.div
+            initial={{ opacity: 0, scale: 1.04 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: easeOut }}
+            style={{ y: photoY }}
+            className="absolute inset-0"
+          >
+            
+            {photo ? (
+              <picture className="relative">
+                {webp && <source srcSet={webp} type="image/webp" />}
+                <img
+                  src={photo}
+                  alt={profile.name}
+                  fetchPriority="high"
+                  className="h-full w-full object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_72%,transparent_98%)]"
+                />
+              </picture>
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <span className="display text-8xl text-fg-subtle">{profile.initials}</span>
+              </div>
             )}
           </motion.div>
         </div>
       </div>
-
-      {/* indikator scroll */}
-      <motion.a
-        href="#about"
-        {...fadeUp(1.2)}
-        aria-label="Scroll ke bawah"
-        className="absolute bottom-8 left-1/2 hidden h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full border border-accent/60 sm:flex"
-      >
-        <motion.span
-          animate={{ y: [-5, 5, -5] }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-          className="h-2 w-2 rounded-full bg-accent"
-        />
-      </motion.a>
     </section>
   );
 }
