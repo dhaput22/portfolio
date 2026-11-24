@@ -4,7 +4,7 @@ import SectionTitle from "./SectionTitle";
 import ArrowBox from "./ArrowBox";
 import { motion } from "framer-motion";
 import { cascade, reveal } from "../lib/motion";
-import { profile } from "../data/content";
+import { contactIntro, profile } from "../data/content";
 
 const info = [
   { label: "Email", value: profile.email, icon: FaEnvelope, href: `mailto:${profile.email}` },
@@ -38,7 +38,7 @@ ${form.name} (${form.email})`);
 
   return (
     <section id="contact" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28">
-      <SectionTitle eyebrow="Hubungi Saya" title="Mari" highlight="Berkolaborasi" />
+      <SectionTitle title="Mari" highlight="Berkolaborasi" intro={contactIntro} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <div>

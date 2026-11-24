@@ -5,7 +5,7 @@
 // =====================================================================
 
 // Mode ringan untuk HP / layar sentuh / hemat data / kurangi gerakan:
-// efek mahal (blur, latar 3D, backdrop blur) dimatikan supaya tetap lancar.
+// efek mahal (blur, backdrop blur) dimatikan supaya tetap lancar.
 const mq = (q) => typeof window !== "undefined" && window.matchMedia(q).matches;
 export const LITE =
   mq("(max-width: 767px)") ||
@@ -23,28 +23,27 @@ export const dur = { fast: 0.2, base: 0.7, exit: 0.3 };
 export const RISE = 24;
 export const STAGGER = 0.08;
 
-const VIEW = { once: true, margin: "0px 0px -10% 0px" };
+// Animasi bolak-balik: muncul saat di-scroll turun, dan diputar mundur saat di-scroll naik lagi.
+// Batas atas layar diperluas jauh ke atas, jadi elemen yang sudah lewat ke atas dianggap tetap terlihat;
+// hanya elemen yang kembali turun melewati tepi bawah layar yang diputar mundur.
+export const VIEW = { once: false, margin: "100000px 0px -14% 0px" };
+export const BACK = { duration: 0.7, ease: [0.45, 0, 0.25, 1] }; // gerak mundur: pelan di awal dan akhir
+
+const twoWay = (hidden, shown, duration, delay) => ({
+  initial: hidden,
+  animate: hidden,
+  whileInView: { ...shown, transition: { duration, ease: easeOut, delay } },
+  viewport: VIEW,
+  transition: BACK,
+});
 
 // Teks/judul: blur -> tajam.
-export const blurIn = (delay = 0) => ({
-  initial: { opacity: 0, ...blur(8), y: 12 },
-  whileInView: { opacity: 1, ...blur(0), y: 0 },
-  viewport: VIEW,
-  transition: { duration: dur.base, ease: easeOut, delay },
-});
+export const blurIn = (delay = 0) =>
+  twoWay({ opacity: 0, ...blur(8), y: 12 }, { opacity: 1, ...blur(0), y: 0 }, dur.base, delay);
 
 // Blok biasa: naik + fade.
-export const reveal = (delay = 0) => ({
-  initial: { opacity: 0, y: RISE },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: VIEW,
-  transition: { duration: dur.base, ease: easeOut, delay },
-});
+export const reveal = (delay = 0) => twoWay({ opacity: 0, y: RISE }, { opacity: 1, y: 0 }, dur.base, delay);
 
 // Kartu ke-i dalam satu grup: makin ke kanan/bawah, makin jauh titik awalnya (48, 72, 96px...).
-export const cascade = (i = 0) => ({
-  initial: { opacity: 0, y: 48 + Math.min(i, 4) * 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: VIEW,
-  transition: { duration: 0.9, ease: easeOut, delay: Math.min(i, 6) * STAGGER },
-});
+export const cascade = (i = 0) =>
+  twoWay({ opacity: 0, y: 48 + Math.min(i, 4) * 24 }, { opacity: 1, y: 0 }, 0.9, Math.min(i, 6) * STAGGER);

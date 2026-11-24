@@ -81,11 +81,82 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ===== Latar yang berbaur halus antar section saat di-scroll =====
-   Nilainya dihitung terus oleh Background.jsx (campuran 3 nada dari satu keluarga warna).
-   Ini hanya nilai awal sebelum JavaScript berjalan. */
-:root { --section-bg: #ebeff5; }
-:root[data-theme="dark"] { --section-bg: #1b1c1f; }
+/* ===== Pemisah section berupa gradasi =====
+   Nada bawah (--stage-b) satu bagian berbaur naik ke nada atas (--stage-a) bagian berikutnya sepanjang --fade.
+   Titik-titik warnanya mengikuti kurva halus (smoothstep), jadi batasnya terasa kabur seperti di-blur.
+   --section-bg = nada tengah. --glow = kekuatan cahaya lime (warna tombol) dari tepi layar. */
+:root {
+  --stage-a: #f7f9fd;
+  --section-bg: #eaeff6;
+  --stage-b: #d1dae7;
+  --fade: clamp(14rem, 34vh, 24rem);
+  --glow: 24%;
+  --glow-soft: 12%;
+}
+:root[data-theme="dark"] {
+  --stage-a: #242529;
+  --section-bg: #1d1e22;
+  --stage-b: #161719;
+  --glow: 14%;
+  --glow-soft: 7%;
+}
+/* layar kecil: cahaya lebih tipis karena ruang kosongnya sedikit */
+@media (max-width: 767px) {
+  :root { --glow: 18%; --glow-soft: 8%; }
+  :root[data-theme="dark"] { --glow: 11%; --glow-soft: 5%; }
+}
+.stage {
+  /* tinggi cahaya memakai % tinggi section, jadi selalu padam sebelum tepi dan tidak terpotong di batas */
+  --light: radial-gradient(
+    ellipse min(36rem, 62vw) 40% at 102% 52%,
+    color-mix(in srgb, var(--color-lime) var(--glow), transparent) 0,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.72), transparent) 22%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.36), transparent) 48%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.1), transparent) 76%,
+    transparent 100%
+  );
+  --light-2: radial-gradient(
+    ellipse min(24rem, 40vw) 30% at -4% 42%,
+    color-mix(in srgb, var(--color-lime) var(--glow-soft), transparent) 0,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow-soft) * 0.5), transparent) 38%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow-soft) * 0.12), transparent) 74%,
+    transparent 100%
+  );
+  position: relative;
+  background: var(--light), var(--light-2), linear-gradient(
+    to bottom,
+    var(--stage-b) 0,
+    color-mix(in srgb, var(--stage-a) 4%, var(--stage-b)) calc(var(--fade) * 0.12),
+    color-mix(in srgb, var(--stage-a) 16%, var(--stage-b)) calc(var(--fade) * 0.25),
+    color-mix(in srgb, var(--stage-a) 50%, var(--stage-b)) calc(var(--fade) * 0.5),
+    color-mix(in srgb, var(--stage-a) 84%, var(--stage-b)) calc(var(--fade) * 0.75),
+    color-mix(in srgb, var(--stage-a) 96%, var(--stage-b)) calc(var(--fade) * 0.88),
+    var(--stage-a) var(--fade),
+    var(--section-bg) 70%,
+    var(--stage-b) 100%
+  );
+}
+/* cahaya utama bergantian: kanan, kiri, kanan... */
+.stage:nth-child(even) {
+  --light: radial-gradient(
+    ellipse min(36rem, 62vw) 40% at -2% 52%,
+    color-mix(in srgb, var(--color-lime) var(--glow), transparent) 0,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.72), transparent) 22%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.36), transparent) 48%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow) * 0.1), transparent) 76%,
+    transparent 100%
+  );
+  --light-2: radial-gradient(
+    ellipse min(24rem, 40vw) 30% at 104% 42%,
+    color-mix(in srgb, var(--color-lime) var(--glow-soft), transparent) 0,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow-soft) * 0.5), transparent) 38%,
+    color-mix(in srgb, var(--color-lime) calc(var(--glow-soft) * 0.12), transparent) 74%,
+    transparent 100%
+  );
+}
+.stage.stage-first {
+  background: var(--light), var(--light-2), linear-gradient(to bottom, var(--section-bg) 40%, var(--stage-b));
+}
 
 body {
   background: var(--section-bg);
@@ -123,13 +194,27 @@ body {
   color: var(--color-fg-subtle);
 }
 
-/* Transisi halus saat ganti tema (dipasang sebentar oleh ThemeToggle) */
+/* Ganti tema: seluruh halaman memudar silang (View Transitions) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.75s;
+  animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+}
+/* selama memudar silang, transisi warna bawaan tiap elemen dimatikan supaya tidak tumpang tindih */
+.theme-instant,
+.theme-instant *,
+.theme-instant *::before,
+.theme-instant *::after {
+  transition: none !important;
+}
+
+/* Cadangan untuk browser tanpa View Transitions (dipasang sebentar oleh ThemeToggle) */
 .theme-transition,
 .theme-transition *,
 .theme-transition *::before,
 .theme-transition *::after {
-  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease,
-    box-shadow 0.45s ease !important;
+  transition: background-color 0.65s ease, color 0.65s ease, border-color 0.65s ease,
+    box-shadow 0.65s ease !important;
 }
 
 /* Kursor ketik untuk teks peran */
@@ -241,6 +326,59 @@ body {
 }
 .btn-soft .icon-box {
   background: var(--color-fill);
+}
+
+/* Kartu skill berjalan: kartu aktif membesar isinya, kartu lain sedikit memudar.
+   Kartu aktif ditandai data-active oleh SkillMarquee (tetap aktif di celah antar kartu, jadi tidak berkedip). */
+.skill-card {
+  transition: opacity 0.35s ease, border-color 0.35s ease;
+}
+.skill-zoom {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  backface-visibility: hidden;
+}
+.skill-icon {
+  transition: color 0.3s ease;
+}
+.skill-track[data-dim] .skill-card {
+  opacity: 0.45;
+}
+.skill-track [data-active] .skill-card {
+  opacity: 1;
+  border-color: color-mix(in srgb, var(--color-fg) 22%, transparent);
+}
+.skill-track [data-active] .skill-zoom {
+  transform: scale(1.16);
+}
+.skill-track [data-active] .skill-icon {
+  color: var(--brand-c);
+}
+
+/* Penanda baris sertifikat yang aktif */
+:root[data-theme="dark"] .cert-mark {
+  background: var(--color-lime);
+}
+
+/* Tab aktif pada segmented control */
+.tab-on {
+  background: var(--color-surface);
+}
+:root[data-theme="dark"] .tab-on {
+  background: #3d3e45;
+}
+
+/* Garis waktu pengalaman: ruas yang sudah dilewati dan titik lime di ujungnya */
+.timeline-fill {
+  background: linear-gradient(to bottom, transparent, var(--color-fg) 22%);
+}
+.timeline-dot {
+  box-shadow: 0 0 0 3px var(--color-fg), 0 0 22px 6px rgba(190, 235, 40, 0.5);
+}
+:root[data-theme="dark"] .timeline-fill {
+  background: linear-gradient(to bottom, transparent, var(--color-lime) 22%);
+}
+:root[data-theme="dark"] .timeline-dot {
+  box-shadow: 0 0 22px 5px rgba(217, 255, 92, 0.45);
 }
 
 /* Label kecil berbentuk pill (eyebrow) */

@@ -1,6 +1,4 @@
-// Pembungkus tiap section. Gaya referensi tidak memakai garis pemisah:
-// jarak antar section dan pergantian latar sudah cukup memisahkan.
-// eslint-disable-next-line no-unused-vars
-export default function Stage({ children, divider }) {
-  return <div>{children}</div>;
+// Pembungkus satu atau beberapa section dengan latar bergradasi; batas antar Stage berbaur halus (lihat .stage di index.css).
+export default function Stage({ children, divider = false }) {
+  return <div className={divider ? "stage" : "stage stage-first"}>{children}</div>;
 }

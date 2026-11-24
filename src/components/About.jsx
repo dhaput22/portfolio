@@ -9,7 +9,7 @@ export default function About() {
 
   return (
     <section id="about" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28">
-      <SectionTitle eyebrow="Tentang Saya" title="Mengenal" highlight="Lebih Dekat" />
+      <SectionTitle title="Mengenal" highlight="Lebih Dekat" />
 
       {/* paragraf pertama sebagai pernyataan besar, sisanya teks pendukung */}
       <div className="mx-auto max-w-3xl text-center">

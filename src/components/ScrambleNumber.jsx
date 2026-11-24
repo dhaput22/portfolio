@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
+import { VIEW } from "../lib/motion";
 
 const rand = () => String(Math.floor(Math.random() * 10));
 
@@ -8,29 +9,35 @@ const rand = () => String(Math.floor(Math.random() * 10));
 export default function ScrambleNumber({ value, delay = 0, duration = 1400 }) {
   const text = String(value);
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "0px 0px -10% 0px" });
+  const inView = useInView(ref, VIEW);
   const reduce = useReducedMotion();
+  const played = useRef(false);
   const [shown, setShown] = useState(() => (reduce ? text : text.replace(/\d/g, "0")));
 
   useEffect(() => {
-    if (!inView || reduce) {
-      if (reduce) setShown(text);
+    if (reduce) {
+      setShown(text);
       return;
     }
+    if (inView) played.current = true;
+    else if (!played.current) return; // belum pernah tampil: tidak ada yang diputar mundur
+    const zero = text.replace(/\d/g, "0");
+    const total = inView ? duration : 500; // mundur lebih singkat
+    const wait = inView ? delay : 0;
     const digitIdx = [...text].map((c, i) => (/\d/.test(c) ? i : -1)).filter((i) => i >= 0);
     // pakai timer (bukan requestAnimationFrame) supaya tetap selesai walau tab sedang di latar
-    const begin = Date.now() + delay * 1000;
+    const begin = Date.now() + wait * 1000;
     const id = setInterval(() => {
       const elapsed = Date.now() - begin;
       if (elapsed < 0) return;
-      const t = elapsed / duration;
+      const t = elapsed / total;
       if (t >= 1) {
-        setShown(text);
+        setShown(inView ? text : zero);
         clearInterval(id);
         return;
       }
       // digit ke-k terkunci setelah porsi waktunya lewat (kiri dulu)
-      const locked = Math.floor(t * (digitIdx.length + 1));
+      const locked = Math.floor((inView ? t : 1 - t) * (digitIdx.length + 1));
       setShown(
         [...text]
           .map((c, i) => {

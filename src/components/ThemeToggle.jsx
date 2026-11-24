@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { FiMoon, FiSun } from "react-icons/fi";
 
@@ -19,15 +20,31 @@ export default function ThemeToggle({ className = "" }) {
     const next = theme === "dark" ? "light" : "dark";
     const root = document.documentElement;
 
-    root.classList.add("theme-transition");
-    root.dataset.theme = next;
+    const apply = () => {
+      root.dataset.theme = next;
+      setTheme(next);
+    };
     try {
       localStorage.setItem("theme", next);
     } catch {
       /* penyimpanan diblokir: abaikan */
     }
-    setTheme(next);
-    window.setTimeout(() => root.classList.remove("theme-transition"), 600);
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      apply();
+    } else if (document.startViewTransition) {
+      // seluruh halaman (termasuk gradasi dan gambar) memudar silang dari mode lama ke mode baru
+      root.classList.add("theme-instant");
+      const vt = document.startViewTransition(() => flushSync(apply));
+      const id = (root.dataset.vt = String(Date.now()));
+      vt.finished.finally(() => {
+        if (root.dataset.vt === id) root.classList.remove("theme-instant");
+      });
+    } else {
+      root.classList.add("theme-transition");
+      apply();
+      window.setTimeout(() => root.classList.remove("theme-transition"), 800);
+    }
   };
 
   return (

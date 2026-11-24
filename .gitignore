@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Foto asli beresolusi besar (hanya disimpan lokal)
+photo-originals/
+
+# Sumber CV (Word), hanya disimpan lokal
+cv-source/
+
+# Konfigurasi preview lokal
+.claude/

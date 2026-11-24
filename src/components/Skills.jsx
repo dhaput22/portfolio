@@ -1,26 +1,25 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import SectionTitle from "./SectionTitle";
+import SkillMarquee, { SkillCard } from "./SkillMarquee";
 import { skillTabs } from "../data/content";
-import { blur, easeIn, easeOut } from "../lib/motion";
+import { BACK, VIEW, easeIn, easeOut } from "../lib/motion";
 
-const grid = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05 } },
-  exit: { opacity: 0, ...blur(6), transition: { duration: 0.2, ease: easeIn } },
-};
-const tile = {
-  hidden: { opacity: 0, y: 28, ...blur(6) },
-  show: { opacity: 1, y: 0, ...blur(0), transition: { duration: 0.6, ease: easeOut } },
+// tanpa filter blur: filter (walau 0px) memaksa seluruh baris berjalan digambar ulang tiap frame
+const panel = {
+  hidden: { opacity: 0, y: 28, transition: BACK },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: easeOut } },
+  exit: { opacity: 0, transition: { duration: 0.2, ease: easeIn } },
 };
 
 export default function Skills() {
   const [tab, setTab] = useState(skillTabs[0].id);
   const current = skillTabs.find((t) => t.id === tab);
+  const reduce = useReducedMotion();
 
   return (
-    <section id="skills" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28">
-      <SectionTitle eyebrow="Keahlian Saya" title="Skill &" highlight="Teknologi" />
+    <section id="skills" className="mx-auto max-w-6xl scroll-mt-24 px-6 pb-10 pt-28">
+      <SectionTitle title="Skill &" highlight="Teknologi" />
 
       {/* tab bergaya segmented control */}
       <div className="mb-10 flex justify-center">
@@ -37,7 +36,7 @@ export default function Skills() {
                 <motion.span
                   layoutId="skill-tab"
                   transition={{ type: "spring", stiffness: 420, damping: 36 }}
-                  className="absolute inset-0 rounded-xl bg-surface shadow-[var(--shadow-soft)]"
+                  className="tab-on absolute inset-0 rounded-xl shadow-[var(--shadow-soft)]"
                 />
               )}
               <span className="relative">{t.label}</span>
@@ -50,23 +49,23 @@ export default function Skills() {
         <AnimatePresence mode="wait">
           <motion.div
             key={current.id}
-            variants={grid}
+            variants={panel}
             initial="hidden"
-            animate="show"
+            animate="hidden"
+            whileInView="show"
+            viewport={VIEW}
             exit="exit"
-            className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4"
           >
-            {current.items.map(({ name, icon: Icon, color }) => (
-              <motion.div
-                key={name}
-                variants={tile}
-                style={{ "--brand-c": color }}
-                className="group flex items-center gap-3.5 rounded-2xl border border-line bg-surface px-5 py-4 transition-shadow duration-300 hover:shadow-[var(--shadow-float)]"
-              >
-                <Icon size={24} aria-hidden className="shrink-0 text-fg transition-colors duration-300 group-hover:text-[var(--brand-c)]" />
-                <span className="text-[15px] text-fg">{name}</span>
-              </motion.div>
-            ))}
+            {reduce ? (
+              // pengguna yang meminta gerak dikurangi: tampil diam dalam grid
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {current.items.map((item) => (
+                  <SkillCard key={item.name} {...item} />
+                ))}
+              </div>
+            ) : (
+              <SkillMarquee items={current.items} label={current.label} />
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
