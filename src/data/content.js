@@ -12,7 +12,7 @@ import { VscVscode } from "react-icons/vsc";
 export const profile = {
   name: "Muhammad Dafa Putra",
   initials: "DF",
-  greeting: "Hai! Saya",
+  greeting: "Hai, Saya",
   titlePrefix: "",
   roles: ["Web Developer", "Laravel Developer", "React Developer", "Back-End Developer"],
   description:
@@ -48,7 +48,7 @@ export const contactIntro =
 export const about = {
   paragraphs: [
     "Saya lulusan D3 Teknik Informatika Politeknik Negeri Batam (IPK 3,83/4,00) yang berfokus pada pengembangan back-end web dengan Laravel, PHP, dan MySQL.",
-    "Untuk PT Epson Batam, saya membangun Warehouse Management System yang menangani penerimaan dan pengiriman barang, pemantauan stok, hingga dashboard inventaris. Di perusahaan yang sama, saya juga punya tiga tahun pengalaman manufaktur di produksi SMT dan material handling, jadi saya tahu langsung bagaimana sistem gudang dan produksi dipakai di lapangan.",
+    "Di PT Epson Batam, saya membangun Warehouse Management System yang menangani penerimaan dan pengiriman barang, pemantauan stok, hingga dashboard inventaris. Di perusahaan yang sama, saya juga punya tiga tahun pengalaman manufaktur di produksi SMT dan material handling, jadi saya tahu langsung bagaimana sistem gudang dan produksi dipakai di lapangan.",
     "Saya terbiasa mengerjakan proyek dari analisis kebutuhan, perancangan, sampai implementasi. Saya cepat belajar teknologi baru, nyaman bekerja dalam tim, dan siap terus berkembang di bidang software engineering.",
   ],
   stats: [
@@ -249,7 +249,7 @@ export const projects = [
         { src: "/projects/smartgate/cover.webp", caption: "Web officer dan permintaan verifikasi di aplikasi mobile" },
         { src: "/projects/smartgate/iot-prototype.webp", caption: "Prototipe IoT: kendaraan mini dengan tag RFID, RFID reader, dan gate servo" },
         { src: "/projects/smartgate/mobile.webp", caption: "Aplikasi mobile: login, verifikasi akses, dan profil pengguna" },
-        { src: "/projects/smartgate/dashboard.webp", caption: "Dashboard officer: total user, tag RFID, dan kendaraan" },
+        { src: "/projects/smartgate/hd-dashboard.webp", caption: "Dashboard officer: total user, tag RFID, kendaraan, dan grafik akses 30 hari (data contoh)" },
         { src: "/projects/smartgate/hd-access-logs.webp", caption: "Access Logs: riwayat akses diizinkan dan ditolak (data contoh)" },
         { src: "/projects/smartgate/hd-rfid-tags.webp", caption: "Kelola tag RFID (data contoh)" },
         { src: "/projects/smartgate/hd-vehicles.webp", caption: "Kelola kendaraan (data contoh)" },
