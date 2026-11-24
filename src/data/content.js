@@ -18,9 +18,12 @@ export const profile = {
   description:
     "Lulusan D3 Teknik Informatika yang suka membangun aplikasi web yang rapi, cepat, dan berguna. Saat ini sedang mencari kesempatan kerja di bidang IT.",
   email: "muhammaddavaputra@gmail.com",
-  phone: "+62 831-8153-1047",
   location: "Batam, Kepulauan Riau",
-  cvUrl: "/CV_Muhammad_Dafa_Putra.pdf", // file CV di folder public/
+  // pilihan bahasa di tombol Unduh CV (file di folder public/)
+  cv: [
+    { lang: "id", label: "Bahasa Indonesia", note: "PDF, 1 halaman", file: "/CV_Muhammad_Dafa_Putra_ID.pdf" },
+    { lang: "en", label: "English", note: "PDF, 1 page", file: "/CV_Muhammad_Dafa_Putra_EN.pdf" },
+  ],
   photo: "/daput.png", // contoh: "/profile.jpg" (taruh di folder public/). Kosong = pakai inisial
   socials: {
     github: "https://github.com/dhaput22",

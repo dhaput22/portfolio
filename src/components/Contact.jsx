@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEnvelope, FaPhone, FaLocationDot, FaGithub, FaLinkedinIn, FaInstagram } from "react-icons/fa6";
+import { FaEnvelope, FaLocationDot, FaGithub, FaLinkedinIn, FaInstagram } from "react-icons/fa6";
 import SectionTitle from "./SectionTitle";
 import ArrowBox from "./ArrowBox";
 import { motion } from "framer-motion";
@@ -8,7 +8,6 @@ import { contactIntro, profile } from "../data/content";
 
 const info = [
   { label: "Email", value: profile.email, icon: FaEnvelope, href: `mailto:${profile.email}` },
-  { label: "Telepon", value: profile.phone, icon: FaPhone, href: `tel:${profile.phone.replace(/[^+\d]/g, "")}` },
   { label: "Lokasi", value: profile.location, icon: FaLocationDot },
 ];
 

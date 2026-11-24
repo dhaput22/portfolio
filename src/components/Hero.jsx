@@ -1,10 +1,11 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { FaGithub, FaInstagram, FaLinkedinIn } from "react-icons/fa6";
-import { FiCode, FiDownload } from "react-icons/fi";
+import { FiCode } from "react-icons/fi";
 import { profile } from "../data/content";
 import useTypewriter from "../hooks/useTypewriter";
 import ArrowBox from "./ArrowBox";
+import CvDownload from "./CvDownload";
 import { blur, easeOut } from "../lib/motion";
 
 // Masuk berurutan: blur -> tajam, sedikit naik.
@@ -89,11 +90,8 @@ export default function Hero() {
               {profile.description}
             </motion.p>
 
-            <motion.div {...enter(4)} className="mt-9 flex flex-wrap items-center gap-3">
-              <a href={profile.cvUrl} download className="btn-arrow">
-                <ArrowBox icon={FiDownload} direction="down" />
-                Unduh CV
-              </a>
+            <motion.div {...enter(4)} className="relative z-20 mt-9 flex flex-wrap items-center gap-3">
+              <CvDownload />
               <a href="#projects" className="btn-soft">
                 <ArrowBox />
                 Lihat Proyek
