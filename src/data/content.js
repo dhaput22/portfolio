@@ -197,7 +197,7 @@ export const projects = [
       subtitle: "Kontrol akses kendaraan dengan RFID UHF dan verifikasi lewat smartphone",
       meta: [
         { label: "Program", value: "PBL 47 · Politeknik Negeri Batam" },
-        { label: "Peran", value: "Full-Stack Web Developer" },
+        { label: "Peran", value: "Web Developer | Backend Developer | Iot Integration" },
         { label: "Periode", value: "2025 (Semester 4)" },
         { label: "Tim", value: "3 orang" },
       ],

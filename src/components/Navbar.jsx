@@ -154,7 +154,7 @@ function NavLinks({ active, atTop, onJump }) {
               href={`#${n.id}`}
               onClick={() => onJump(n.id)}
               aria-current={active === n.id ? "location" : undefined}
-              className={`block rounded-[10px] px-[1.125rem] py-2 text-sm transition-colors duration-500 ease-out ${
+              className={`block whitespace-nowrap rounded-[10px] py-2 pl-[1.125rem] pr-2 xl:pr-[1.125rem] text-sm transition-colors duration-500 ease-out ${
                 active === n.id ? "text-fg" : "text-fg-muted hover:text-fg"
               }`}
             >
@@ -207,7 +207,7 @@ export default function Navbar() {
             href="#contact"
             onClick={() => jump("contact")}
             aria-current={active === "contact" ? "location" : undefined}
-            className="group inline-flex h-11 items-center gap-2.5 rounded-xl border border-line bg-surface py-1 pl-1 pr-4 text-sm font-medium text-fg shadow-[var(--shadow-soft)]"
+            className="group inline-flex h-11 items-center gap-2.5 whitespace-nowrap rounded-xl border border-line bg-surface py-1 pl-1 pr-4 text-sm font-medium text-fg shadow-[var(--shadow-soft)]"
           >
             <span
               className={`icon-box !h-9 !w-9 !rounded-[10px] transition-colors duration-300 ${
