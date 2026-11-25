@@ -377,7 +377,7 @@ export default function Projects() {
 
   return (
     <section id="projects" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-28">
-      <SectionTitle title="Proyek" highlight="Pilihan" />
+      <SectionTitle title="Pengalaman" highlight="Proyek" />
       <ProjectRail onOpen={openDetail} />
 
       <AnimatePresence>
