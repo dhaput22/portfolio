@@ -84,11 +84,13 @@ function useActiveSection() {
 
 // Menu desktop: titik di kiri menu yang aktif. Saat berpindah, titiknya meluncur ke menu tujuan: mulai dan
 // berhenti perlahan, sedikit memanjang dan menipis selagi melaju, lalu memancarkan riak kecil saat tiba.
-function NavLinks({ active, onJump }) {
+// Di puncak halaman (navbar tanpa bingkai) dan di bagian kontak titiknya memudar.
+function NavLinks({ active, atTop, onJump }) {
   const listRef = useRef(null);
   const placed = useRef(false);
   const reduce = useReducedMotion();
   const index = nav.findIndex((n) => n.id === active);
+  const hidden = index < 0 || atTop;
 
   const goal = useMotionValue(0);
   // dua pegas berurutan tanpa pantulan: awal dan akhir geraknya sama-sama halus, dan tetap mulus
@@ -130,11 +132,11 @@ function NavLinks({ active, onJump }) {
         aria-hidden
         style={{ x }}
         initial={false}
-        animate={{ opacity: index < 0 ? 0 : 1, scale: index < 0 ? 0.2 : 1 }}
-        transition={{ duration: 0.45, ease: easeOut }}
+        animate={{ opacity: hidden ? 0 : 1, scale: hidden ? 0.2 : 1 }}
+        transition={hidden ? { duration: 1.2, delay: 0.1, ease: [0.45, 0, 0.25, 1] } : { duration: 0.45, ease: easeOut }}
         className="absolute left-0 top-1/2 -mt-[3.5px] h-[7px] w-[7px]"
       >
-        {!reduce && index >= 0 && (
+        {!reduce && index > 0 && (
           <motion.span
             key={index}
             initial={{ scale: 1, opacity: 0 }}
@@ -196,7 +198,7 @@ export default function Navbar() {
           <span className="text-fg-subtle">.</span>
         </a>
 
-        <NavLinks active={active} onJump={jump} />
+        <NavLinks active={active} atTop={!scrolled} onJump={jump} />
 
         {/* desktop: tombol tema + CTA */}
         <div className="hidden items-center justify-end gap-2 lg:flex">

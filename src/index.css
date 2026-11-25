@@ -354,16 +354,15 @@ body {
   color: var(--brand-c);
 }
 
-/* Titik penanda menu aktif: charcoal berlingkar lime di mode terang (lime polos tidak terlihat di latar putih),
-   lime menyala di mode gelap */
+/* Titik penanda menu aktif: lime dengan cahaya tipis. Di mode terang lime-nya lebih tua supaya terbaca di latar putih */
 .nav-dot {
   display: block;
   flex-shrink: 0;
   height: 7px;
   width: 7px;
   border-radius: 999px;
-  background: var(--color-fg);
-  box-shadow: 0 0 0 3px var(--color-lime);
+  background: #86bd0b;
+  box-shadow: 0 0 9px 1px rgba(150, 205, 20, 0.45);
 }
 :root[data-theme="dark"] .nav-dot {
   background: var(--color-lime);
