@@ -48,13 +48,13 @@ export const contactIntro =
 export const about = {
   paragraphs: [
     "Saya lulusan D3 Teknik Informatika Politeknik Negeri Batam (IPK 3,83/4,00) yang berfokus pada pengembangan back-end web dengan Laravel, PHP, dan MySQL.",
-    "Di PT Epson Batam, saya membangun Warehouse Management System yang menangani penerimaan dan pengiriman barang, pemantauan stok, hingga dashboard inventaris. Di perusahaan yang sama, saya juga punya tiga tahun pengalaman manufaktur di produksi SMT dan material handling, jadi saya tahu langsung bagaimana sistem gudang dan produksi dipakai di lapangan.",
+    "Di PT Epson Batam, saya membangun Warehouse Management System yang menangani penerimaan dan pengiriman barang, pemantauan stok, hingga dashboard inventaris. Di perusahaan yang sama, saya memiliki tiga tahun pengalaman manufaktur di produksi SMT dan material handling, jadi saya tahu langsung bagaimana sistem gudang dan produksi dipakai di lapangan.",
     "Saya terbiasa mengerjakan proyek dari analisis kebutuhan, perancangan, sampai implementasi. Saya cepat belajar teknologi baru, nyaman bekerja dalam tim, dan siap terus berkembang di bidang software engineering.",
   ],
   stats: [
     { value: "5", label: "Proyek selesai" },
     { value: "3", label: "Tahun belajar coding" },
-    { value: "15+", label: "Teknologi dikuasai" },
+    { value: "15+", label: "Teknologi digunakan" },
   ],
 };
 

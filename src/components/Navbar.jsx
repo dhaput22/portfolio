@@ -1,12 +1,172 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring, useTransform, useVelocity,
+} from "framer-motion";
 import { FiArrowRight } from "react-icons/fi";
 import { nav, profile } from "../data/content";
 import ThemeToggle from "./ThemeToggle";
 import { blur, easeOut } from "../lib/motion";
 
-export default function Navbar() {
+const LOCK_MAX = "onscrollend" in window ? 1200 : 350; // ms
+const DOT_LEFT = 2; // jarak titik dari tepi kiri menu (px)
+
+const sectionIds = [...nav.map((n) => n.id), "contact"];
+
+// Bagian yang sedang dibaca: yang terakhir melewati garis 35% dari atas layar (paling bawah halaman = kontak).
+const currentSection = () => {
+  const root = document.documentElement;
+  if (window.scrollY > 0 && window.innerHeight + window.scrollY >= root.scrollHeight - 2) return "contact";
+  const line = window.innerHeight * 0.35;
+  let id = sectionIds[0];
+  for (const s of sectionIds) {
+    const el = document.getElementById(s);
+    if (el && el.getBoundingClientRect().top <= line) id = s;
+  }
+  return id;
+};
+
+// Menu aktif mengikuti scroll. Saat menu diklik, penanda langsung meluncur ke tujuan dan tidak ikut
+// berhenti di bagian-bagian yang cuma dilewati selama halaman bergulir.
+function useActiveSection() {
   const [active, setActive] = useState("home");
+  const locked = useRef(false);
+  const timer = useRef(0);
+
+  useEffect(() => {
+    let raf = 0;
+    const unlock = () => {
+      locked.current = false;
+      clearTimeout(timer.current);
+    };
+    const unlockIn = (ms) => {
+      clearTimeout(timer.current);
+      timer.current = setTimeout(unlock, ms);
+    };
+    const onScroll = () => {
+      if (locked.current) {
+        // terkunci sampai gulirannya selesai (scrollend); batas waktu hanya cadangan,
+        // cukup panjang supaya tidak terlepas saat halaman sempat tersendat
+        unlockIn(LOCK_MAX);
+        return;
+      }
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setActive(currentSection()));
+    };
+    const onScrollEnd = () => locked.current && unlockIn(120);
+    raf = requestAnimationFrame(() => setActive(currentSection()));
+    const opts = { passive: true };
+    window.addEventListener("scroll", onScroll, opts);
+    document.addEventListener("scrollend", onScrollEnd);
+    window.addEventListener("resize", onScroll);
+    // pengguna menggulir sendiri di tengah jalan: ikuti lagi posisi sebenarnya
+    window.addEventListener("wheel", unlock, opts);
+    window.addEventListener("touchmove", unlock, opts);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer.current);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("scrollend", onScrollEnd);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("wheel", unlock);
+      window.removeEventListener("touchmove", unlock);
+    };
+  }, []);
+
+  const jump = (id) => {
+    locked.current = true;
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => (locked.current = false), LOCK_MAX); // kalau ternyata tidak ada guliran
+    setActive(id);
+  };
+
+  return [active, jump];
+}
+
+// Menu desktop: titik di kiri menu yang aktif. Saat berpindah, titiknya meluncur ke menu tujuan: mulai dan
+// berhenti perlahan, sedikit memanjang dan menipis selagi melaju, lalu memancarkan riak kecil saat tiba.
+function NavLinks({ active, onJump }) {
+  const listRef = useRef(null);
+  const placed = useRef(false);
+  const reduce = useReducedMotion();
+  const index = nav.findIndex((n) => n.id === active);
+
+  const goal = useMotionValue(0);
+  // dua pegas berurutan tanpa pantulan: awal dan akhir geraknya sama-sama halus, dan tetap mulus
+  // walau tujuannya berganti di tengah jalan
+  const lead = useSpring(goal, { stiffness: 150, damping: 25 });
+  const x = useSpring(lead, { stiffness: 190, damping: 28 });
+  const speed = useSpring(useVelocity(x), { stiffness: 400, damping: 40 });
+  const scaleX = useTransform(speed, [-1400, 0, 1400], [2.6, 1, 2.6]);
+  const scaleY = useTransform(speed, [-1400, 0, 1400], [0.8, 1, 0.8]);
+  const fade = useTransform(speed, [-1400, -150, 0, 150, 1400], [0.5, 0.9, 1, 0.9, 0.5]);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    const measure = (instant) => {
+      const li = list.querySelectorAll("li")[index];
+      if (!li?.offsetWidth) return;
+      goal.set(li.offsetLeft + DOT_LEFT);
+      if (instant) {
+        lead.jump(goal.get());
+        x.jump(goal.get());
+      }
+    };
+    measure(reduce || !placed.current);
+    if (list.offsetWidth) placed.current = true;
+    // font selesai dimuat atau lebar layar berubah: pindah tanpa animasi
+    let first = true;
+    const ro = new ResizeObserver(() => {
+      if (!first) measure(true);
+      first = false;
+      if (list.offsetWidth) placed.current = true;
+    });
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, [index, goal, lead, x, reduce]);
+
+  return (
+    <div className="relative hidden lg:block">
+      <motion.span
+        aria-hidden
+        style={{ x }}
+        initial={false}
+        animate={{ opacity: index < 0 ? 0 : 1, scale: index < 0 ? 0.2 : 1 }}
+        transition={{ duration: 0.45, ease: easeOut }}
+        className="absolute left-0 top-1/2 -mt-[3.5px] h-[7px] w-[7px]"
+      >
+        {!reduce && index >= 0 && (
+          <motion.span
+            key={index}
+            initial={{ scale: 1, opacity: 0 }}
+            animate={{ scale: [1, 1, 3.4], opacity: [0, 0.7, 0] }}
+            transition={{ duration: 0.8, delay: 0.5, times: [0, 0.05, 1], ease: "easeOut" }}
+            className="absolute inset-0 rounded-full bg-lime"
+          />
+        )}
+        <motion.span style={{ scaleX, scaleY, opacity: fade }} className="nav-dot absolute inset-0" />
+      </motion.span>
+      <ul ref={listRef} className="relative flex items-center gap-1">
+        {nav.map((n) => (
+          <li key={n.id}>
+            <a
+              href={`#${n.id}`}
+              onClick={() => onJump(n.id)}
+              aria-current={active === n.id ? "location" : undefined}
+              className={`block rounded-[10px] px-[1.125rem] py-2 text-sm transition-colors duration-500 ease-out ${
+                active === n.id ? "text-fg" : "text-fg-muted hover:text-fg"
+              }`}
+            >
+              {n.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function Navbar() {
+  const [active, jump] = useActiveSection();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -15,19 +175,6 @@ export default function Navbar() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const ids = [...nav.map((n) => n.id), "contact"];
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: "-45% 0px -50% 0px" }
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
   }, []);
 
   return (
@@ -44,34 +191,28 @@ export default function Navbar() {
             : "border border-transparent"
         }`}
       >
-        <a href="#home" className="whitespace-nowrap text-lg font-semibold tracking-[-0.02em] text-fg">
+        <a href="#home" onClick={() => jump("home")} className="whitespace-nowrap text-lg font-semibold tracking-[-0.02em] text-fg">
           {profile.name}
           <span className="text-fg-subtle">.</span>
         </a>
 
-        <ul className="hidden items-center gap-1 lg:flex">
-          {nav.map((n) => (
-            <li key={n.id}>
-              <a
-                href={`#${n.id}`}
-                className={`block rounded-lg px-3.5 py-2 text-sm transition-colors ${
-                  active === n.id ? "text-fg" : "text-fg-muted hover:text-fg"
-                }`}
-              >
-                {n.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <NavLinks active={active} onJump={jump} />
 
         {/* desktop: tombol tema + CTA */}
         <div className="hidden items-center justify-end gap-2 lg:flex">
           <ThemeToggle />
           <a
             href="#contact"
+            onClick={() => jump("contact")}
+            aria-current={active === "contact" ? "location" : undefined}
             className="group inline-flex h-11 items-center gap-2.5 rounded-xl border border-line bg-surface py-1 pl-1 pr-4 text-sm font-medium text-fg shadow-[var(--shadow-soft)]"
           >
-            <span className="icon-box !h-9 !w-9 !rounded-[10px] bg-fill" aria-hidden>
+            <span
+              className={`icon-box !h-9 !w-9 !rounded-[10px] transition-colors duration-300 ${
+                active === "contact" ? "bg-lime text-on-lime" : "bg-fill"
+              }`}
+              aria-hidden
+            >
               <FiArrowRight size={15} className="arr arr-1" />
               <FiArrowRight size={15} className="arr arr-2" />
             </span>
@@ -107,9 +248,24 @@ export default function Navbar() {
               <li key={n.id}>
                 <a
                   href={`#${n.id}`}
-                  onClick={() => setOpen(false)}
-                  className="block rounded-xl px-4 py-3 text-fg hover:bg-fill"
+                  onClick={() => {
+                    jump(n.id);
+                    setOpen(false);
+                  }}
+                  aria-current={active === n.id ? "location" : undefined}
+                  className={`flex items-center rounded-xl px-4 py-3 transition-colors duration-300 hover:bg-fill ${
+                    active === n.id ? "text-fg" : "text-fg-muted"
+                  }`}
                 >
+                  {active === n.id && (
+                    <motion.span
+                      aria-hidden
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.4, delay: 0.1, ease: easeOut }}
+                      className="nav-dot mr-3"
+                    />
+                  )}
                   {n.label}
                 </a>
               </li>

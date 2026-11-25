@@ -354,6 +354,22 @@ body {
   color: var(--brand-c);
 }
 
+/* Titik penanda menu aktif: charcoal berlingkar lime di mode terang (lime polos tidak terlihat di latar putih),
+   lime menyala di mode gelap */
+.nav-dot {
+  display: block;
+  flex-shrink: 0;
+  height: 7px;
+  width: 7px;
+  border-radius: 999px;
+  background: var(--color-fg);
+  box-shadow: 0 0 0 3px var(--color-lime);
+}
+:root[data-theme="dark"] .nav-dot {
+  background: var(--color-lime);
+  box-shadow: 0 0 10px 1px color-mix(in srgb, var(--color-lime) 55%, transparent);
+}
+
 /* Penanda baris sertifikat yang aktif */
 :root[data-theme="dark"] .cert-mark {
   background: var(--color-lime);
