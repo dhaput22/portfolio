@@ -74,10 +74,11 @@ function ProjectTile({ p, onOpen, focusable }) {
         </p>
       </div>
 
-      {/* caption tetap untuk layar sentuh (tidak ada hover) */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-charcoal/90 via-charcoal/55 to-transparent px-5 pb-4 pt-12 [@media(hover:none)]:block">
+      {/* caption tetap untuk layar sentuh (tidak ada hover). Warnanya selalu gelap di kedua mode:
+          token charcoal berubah jadi terang di mode gelap, jadi tidak dipakai di sini */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-[rgba(18,19,21,0.95)] via-[rgba(18,19,21,0.78)] via-55% to-transparent px-5 pb-4 pt-16 [@media(hover:none)]:block">
         <h3 className="text-base font-medium tracking-[-0.02em] text-snow">{p.title}</h3>
-        <p className="mt-0.5 line-clamp-1 text-xs text-snow/65">{p.tags.join(", ")}</p>
+        <p className="mt-0.5 line-clamp-1 text-xs text-snow/80">{p.tags.join(", ")}</p>
       </div>
 
       {/* seluruh tile bisa diklik */}

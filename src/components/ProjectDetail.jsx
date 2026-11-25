@@ -36,7 +36,7 @@ function Lightbox({ items, index, onClose, onMove }) {
   }, [onClose, onMove]);
 
   const navBtn =
-    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-snow/20 bg-black/60 text-snow transition hover:border-accent hover:text-accent";
+    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-snow/20 bg-black/60 text-snow transition hover:border-lime hover:text-lime";
 
   return (
     <motion.div
