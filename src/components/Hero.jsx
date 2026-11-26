@@ -71,7 +71,7 @@ export default function Hero() {
           <div className="relative z-10 pb-10 lg:self-center lg:pb-24">
             <motion.p {...enter(0)} className="pill">
               <span className="dot"><FiCode size={11} /></span>
-              <span className="font-medium">
+              <span className="font-medium notranslate" translate="no">
                 {profile.titlePrefix}
                 <span className="caret">{typed}</span>
               </span>
